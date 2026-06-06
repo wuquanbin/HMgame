@@ -1,49 +1,45 @@
 #===============================================================================
-# @brief    Kconfig for ESP32 snake game demo
+# @brief    Kconfig for ESP32 8x8 pixel game console demo
 #===============================================================================
-config SAMPLE_SUPPORT_SNAKE_GAME
-    bool "Enable ESP32 Snake Game"
+config SAMPLE_SUPPORT_PIXEL_GAME_CONSOLE
+    bool "Enable ESP32 Pixel Game Console"
     default n
     help
-      Enable the snake game demo with 8x8 LED matrix, TM1650 digital tube,
-      active buzzer and five-way AD key module.
+      Enable the ESP32 8x8 pixel game console with Snake, Tetris, Dino and
+      Plane Shooter. Hardware keeps the original I2C LED matrix, TM1650 tube,
+      active buzzer and five-way AD key module IO.
 
-config SNAKE_I2C_BUS_ID
+config GAME_I2C_BUS_ID
     int "I2C bus id for matrix + tube"
-    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    depends on SAMPLE_SUPPORT_PIXEL_GAME_CONSOLE
     default 1
 
-config SNAKE_I2C_SCL_PIN
+config GAME_I2C_SCL_PIN
     int "I2C SCL pin"
-    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    depends on SAMPLE_SUPPORT_PIXEL_GAME_CONSOLE
     default 22
 
-config SNAKE_I2C_SDA_PIN
+config GAME_I2C_SDA_PIN
     int "I2C SDA pin"
-    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    depends on SAMPLE_SUPPORT_PIXEL_GAME_CONSOLE
     default 21
 
-config SNAKE_MATRIX_I2C_ADDR
+config GAME_MATRIX_I2C_ADDR
     int "8x8 matrix I2C address"
-    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    depends on SAMPLE_SUPPORT_PIXEL_GAME_CONSOLE
     default 112
 
-config SNAKE_BUZZER_PIN
+config GAME_BUZZER_PIN
     int "Active buzzer pin"
-    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    depends on SAMPLE_SUPPORT_PIXEL_GAME_CONSOLE
     default 5
 
-config SNAKE_BUZZER_ACTIVE_LEVEL
+config GAME_BUZZER_ACTIVE_LEVEL
     int "Buzzer active level (1=high, 0=low)"
-    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    depends on SAMPLE_SUPPORT_PIXEL_GAME_CONSOLE
     default 1
 
-config SNAKE_ADKEY_ADC_CHANNEL
+config GAME_ADKEY_ADC_CHANNEL
     int "AD key ADC channel"
-    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    depends on SAMPLE_SUPPORT_PIXEL_GAME_CONSOLE
     default 6
-
-config SNAKE_TICK_MS
-    int "Snake move interval in ms"
-    depends on SAMPLE_SUPPORT_SNAKE_GAME
-    default 5000
