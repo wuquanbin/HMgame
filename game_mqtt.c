@@ -27,6 +27,9 @@
 #define MQTT_CMD_TIMEOUT_MS       3000
 #define MQTT_TASK_STACK_SIZE      0x1800
 #define MQTT_TASK_PRIO            (osPriority_t)(13)
+#define MQTT_EVENT_PUBLISH        0x00000001U
+#define MQTT_LOOP_WAIT_MS         100
+#define MQTT_YIELD_TIMEOUT_MS     0
 
 static MQTTClient g_mqtt_client;
 static Network g_network;
@@ -35,6 +38,7 @@ static unsigned char *g_read_buf;
 static volatile bool g_mqtt_ready;
 static volatile uint8_t g_revive_mask;
 static osMutexId_t g_pending_mutex;
+static osThreadId_t g_mqtt_thread_id;
 static bool g_publish_pending;
 static game_id_t g_pending_game_id;
 static uint16_t g_pending_score;
@@ -392,6 +396,9 @@ void game_mqtt_publish_game_over(game_id_t game_id, uint16_t score)
     g_pending_payload[sizeof(g_pending_payload) - 1U] = '\0';
     g_publish_pending = true;
     pending_unlock();
+    if (g_mqtt_thread_id != NULL) {
+        (void)osThreadFlagsSet(g_mqtt_thread_id, MQTT_EVENT_PUBLISH);
+    }
     printf("MQTT queue score: %s\r\n", payload);
 }
 
@@ -450,6 +457,7 @@ static void mqtt_publish_pending_if_any(void)
     if (!mqtt_take_pending(&game_id, &score, payload, sizeof(payload))) {
         return;
     }
+    printf("MQTT pending publish try: %s\r\n", payload);
     if (!g_mqtt_ready || !MQTTIsConnected(&g_mqtt_client)) {
         printf("MQTT offline, keep score queued: %s %u\r\n",
             game_mqtt_name(game_id), (unsigned int)score);
@@ -465,7 +473,11 @@ static void mqtt_publish_pending_if_any(void)
 
 static void game_mqtt_task(void *argument)
 {
+    uint32_t events;
+    int yield_rc;
+
     (void)argument;
+    g_mqtt_thread_id = osThreadGetId();
     game_delay_ms(1200);
 
     while (1) {
@@ -480,7 +492,13 @@ static void game_mqtt_task(void *argument)
         }
 
         mqtt_publish_pending_if_any();
-        int yield_rc = MQTTYield(&g_mqtt_client, 1000);
+        events = osThreadFlagsWait(MQTT_EVENT_PUBLISH, osFlagsWaitAny,
+            game_ms_to_ticks(MQTT_LOOP_WAIT_MS));
+        if ((events & osFlagsError) == 0U) {
+            mqtt_publish_pending_if_any();
+        }
+
+        yield_rc = MQTTYield(&g_mqtt_client, MQTT_YIELD_TIMEOUT_MS);
         if (yield_rc != 0) {
             printf("MQTT yield failed, reconnect\r\n");
             mqtt_close();
