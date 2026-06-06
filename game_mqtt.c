@@ -34,24 +34,28 @@ static unsigned char *g_send_buf;
 static unsigned char *g_read_buf;
 static volatile bool g_mqtt_ready;
 static volatile uint8_t g_revive_mask;
-static osMutexId_t g_mqtt_mutex;
+static osMutexId_t g_pending_mutex;
+static bool g_publish_pending;
+static game_id_t g_pending_game_id;
+static uint16_t g_pending_score;
+static char g_pending_payload[160];
 
 static int g_scan_done;
 static int g_connect_done;
 static int g_wifi_event_registered;
 static WifiEvent g_wifi_event_handler = {0};
 
-static void mqtt_lock(void)
+static void pending_lock(void)
 {
-    if (g_mqtt_mutex != NULL) {
-        (void)osMutexAcquire(g_mqtt_mutex, osWaitForever);
+    if (g_pending_mutex != NULL) {
+        (void)osMutexAcquire(g_pending_mutex, osWaitForever);
     }
 }
 
-static void mqtt_unlock(void)
+static void pending_unlock(void)
 {
-    if (g_mqtt_mutex != NULL) {
-        (void)osMutexRelease(g_mqtt_mutex);
+    if (g_pending_mutex != NULL) {
+        (void)osMutexRelease(g_pending_mutex);
     }
 }
 
@@ -214,6 +218,42 @@ static int wait_ip_ready(void)
     return -1;
 }
 
+static bool wifi_has_ip(void)
+{
+    WifiLinkedInfo linked_info = {0};
+
+    return (GetLinkedInfo(&linked_info) == WIFI_SUCCESS) &&
+        (linked_info.connState == WIFI_CONNECTED) &&
+        (linked_info.ipAddress != 0U);
+}
+
+static int wifi_ensure_enabled(void)
+{
+    WifiErrorCode ret;
+    int retry;
+
+    if (IsWifiActive() != WIFI_STA_NOT_ACTIVE) {
+        return 0;
+    }
+
+    ret = EnableWifi();
+    if (ret == WIFI_SUCCESS) {
+        return 0;
+    }
+    if (ret == ERROR_WIFI_BUSY) {
+        printf("EnableWifi busy, wait active\r\n");
+        for (retry = 0; retry < 10; retry++) {
+            if (IsWifiActive() != WIFI_STA_NOT_ACTIVE) {
+                return 0;
+            }
+            osDelay(200);
+        }
+    }
+
+    printf("EnableWifi failed, ret=%d\r\n", ret);
+    return ret;
+}
+
 static int wifi_connect(void)
 {
     WifiErrorCode ret;
@@ -224,11 +264,14 @@ static int wifi_connect(void)
         return -1;
     }
 
-    ret = EnableWifi();
-    if (ret != WIFI_SUCCESS) {
-        printf("EnableWifi failed, ret=%d\r\n", ret);
-        return ret;
+    if (wifi_has_ip()) {
+        return 0;
     }
+
+    if (wifi_ensure_enabled() != 0) {
+        return -1;
+    }
+
     if (IsWifiActive() == WIFI_STA_NOT_ACTIVE) {
         printf("WiFi station is not active\r\n");
         return -1;
@@ -278,7 +321,6 @@ static int mqtt_alloc_buffer(void)
 
 static void mqtt_close(void)
 {
-    mqtt_lock();
     g_mqtt_ready = false;
     if (MQTTIsConnected(&g_mqtt_client)) {
         (void)MQTTDisconnect(&g_mqtt_client);
@@ -288,7 +330,6 @@ static void mqtt_close(void)
     free(g_read_buf);
     g_send_buf = NULL;
     g_read_buf = NULL;
-    mqtt_unlock();
 }
 
 static int mqtt_connect(void)
@@ -338,38 +379,88 @@ static int mqtt_connect(void)
 
 void game_mqtt_publish_game_over(game_id_t game_id, uint16_t score)
 {
-    char payload[160];
-    MQTTMessage message;
-
-    mqtt_lock();
-    if (!g_mqtt_ready || !MQTTIsConnected(&g_mqtt_client)) {
-        printf("MQTT offline, skip score upload: %s %u\r\n",
-            game_mqtt_name(game_id), (unsigned int)score);
-        mqtt_unlock();
-        return;
-    }
+    char payload[sizeof(g_pending_payload)];
 
     (void)snprintf(payload, sizeof(payload),
         "{\"type\":\"game_over\",\"game\":\"%s\",\"score\":%u}",
         game_mqtt_name(game_id), (unsigned int)score);
 
+    pending_lock();
+    g_pending_game_id = game_id;
+    g_pending_score = score;
+    (void)strncpy(g_pending_payload, payload, sizeof(g_pending_payload) - 1U);
+    g_pending_payload[sizeof(g_pending_payload) - 1U] = '\0';
+    g_publish_pending = true;
+    pending_unlock();
+    printf("MQTT queue score: %s\r\n", payload);
+}
+
+static bool mqtt_take_pending(game_id_t *game_id, uint16_t *score, char *payload, size_t payload_size)
+{
+    bool pending;
+
+    pending_lock();
+    pending = g_publish_pending;
+    if (pending) {
+        *game_id = g_pending_game_id;
+        *score = g_pending_score;
+        (void)strncpy(payload, g_pending_payload, payload_size - 1U);
+        payload[payload_size - 1U] = '\0';
+        g_publish_pending = false;
+    }
+    pending_unlock();
+    return pending;
+}
+
+static void mqtt_restore_pending(game_id_t game_id, uint16_t score, const char *payload)
+{
+    pending_lock();
+    g_pending_game_id = game_id;
+    g_pending_score = score;
+    (void)strncpy(g_pending_payload, payload, sizeof(g_pending_payload) - 1U);
+    g_pending_payload[sizeof(g_pending_payload) - 1U] = '\0';
+    g_publish_pending = true;
+    pending_unlock();
+}
+
+static bool mqtt_publish_one_topic(const char *topic, const char *payload)
+{
+    MQTTMessage message;
+
     (void)memset(&message, 0, sizeof(message));
     message.qos = QOS0;
     message.retained = 0;
-    message.payload = payload;
+    message.payload = (void *)payload;
     message.payloadlen = strlen(payload);
 
-    if (MQTTPublish(&g_mqtt_client, MQTT_TOPIC_EVENT, &message) == 0) {
-        printf("MQTT publish %s: %s\r\n", MQTT_TOPIC_EVENT, payload);
-    } else {
-        printf("MQTT publish failed: %s\r\n", payload);
+    if (MQTTPublish(&g_mqtt_client, topic, &message) == 0) {
+        printf("MQTT publish %s: %s\r\n", topic, payload);
+        return true;
     }
-    if (MQTTPublish(&g_mqtt_client, MQTT_TOPIC_LEGACY, &message) == 0) {
-        printf("MQTT publish %s: %s\r\n", MQTT_TOPIC_LEGACY, payload);
-    } else {
-        printf("MQTT publish legacy failed: %s\r\n", payload);
+    printf("MQTT publish failed %s: %s\r\n", topic, payload);
+    return false;
+}
+
+static void mqtt_publish_pending_if_any(void)
+{
+    game_id_t game_id;
+    uint16_t score;
+    char payload[sizeof(g_pending_payload)];
+
+    if (!mqtt_take_pending(&game_id, &score, payload, sizeof(payload))) {
+        return;
     }
-    mqtt_unlock();
+    if (!g_mqtt_ready || !MQTTIsConnected(&g_mqtt_client)) {
+        printf("MQTT offline, keep score queued: %s %u\r\n",
+            game_mqtt_name(game_id), (unsigned int)score);
+        mqtt_restore_pending(game_id, score, payload);
+        return;
+    }
+    if (!mqtt_publish_one_topic(MQTT_TOPIC_EVENT, payload)) {
+        mqtt_restore_pending(game_id, score, payload);
+        return;
+    }
+    (void)mqtt_publish_one_topic(MQTT_TOPIC_LEGACY, payload);
 }
 
 static void game_mqtt_task(void *argument)
@@ -388,9 +479,8 @@ static void game_mqtt_task(void *argument)
             }
         }
 
-        mqtt_lock();
+        mqtt_publish_pending_if_any();
         int yield_rc = MQTTYield(&g_mqtt_client, 1000);
-        mqtt_unlock();
         if (yield_rc != 0) {
             printf("MQTT yield failed, reconnect\r\n");
             mqtt_close();
@@ -404,8 +494,8 @@ void game_mqtt_start(void)
 {
     osThreadAttr_t attr = {0};
 
-    if (g_mqtt_mutex == NULL) {
-        g_mqtt_mutex = osMutexNew(NULL);
+    if (g_pending_mutex == NULL) {
+        g_pending_mutex = osMutexNew(NULL);
     }
     attr.name = "GameMqtt";
     attr.stack_size = MQTT_TASK_STACK_SIZE;
