@@ -49,6 +49,8 @@ static int g_connect_done;
 static int g_wifi_event_registered;
 static WifiEvent g_wifi_event_handler = {0};
 
+static bool mqtt_publish_one_topic(const char *topic, const char *payload);
+
 static void pending_lock(void)
 {
     if (g_pending_mutex != NULL) {
@@ -393,6 +395,13 @@ void game_mqtt_publish_game_over(game_id_t game_id, uint16_t score)
     (void)snprintf(payload, sizeof(payload),
         "{\"type\":\"game_over\",\"game\":\"%s\",\"score\":%u}",
         game_mqtt_name(game_id), (unsigned int)score);
+
+    if (g_mqtt_ready && MQTTIsConnected(&g_mqtt_client)) {
+        if (mqtt_publish_one_topic(MQTT_TOPIC_EVENT, payload)) {
+            (void)MQTTYield(&g_mqtt_client, MQTT_LOOP_WAIT_MS);
+            return;
+        }
+    }
 
     pending_lock();
     g_pending_game_id = game_id;
