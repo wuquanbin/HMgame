@@ -21,6 +21,7 @@
 #define MQTT_PASSWORD             "123"
 #define MQTT_TOPIC_EVENT          "wuquanbin/game/event"
 #define MQTT_TOPIC_CMD            "wuquanbin/game/cmd"
+#define MQTT_TOPIC_LEGACY         "wuquanbin"
 
 #define MQTT_BUF_SIZE             2048
 #define MQTT_CMD_TIMEOUT_MS       3000
@@ -33,11 +34,26 @@ static unsigned char *g_send_buf;
 static unsigned char *g_read_buf;
 static volatile bool g_mqtt_ready;
 static volatile uint8_t g_revive_mask;
+static osMutexId_t g_mqtt_mutex;
 
 static int g_scan_done;
 static int g_connect_done;
 static int g_wifi_event_registered;
 static WifiEvent g_wifi_event_handler = {0};
+
+static void mqtt_lock(void)
+{
+    if (g_mqtt_mutex != NULL) {
+        (void)osMutexAcquire(g_mqtt_mutex, osWaitForever);
+    }
+}
+
+static void mqtt_unlock(void)
+{
+    if (g_mqtt_mutex != NULL) {
+        (void)osMutexRelease(g_mqtt_mutex);
+    }
+}
 
 static const char *game_mqtt_name(game_id_t game_id)
 {
@@ -262,6 +278,7 @@ static int mqtt_alloc_buffer(void)
 
 static void mqtt_close(void)
 {
+    mqtt_lock();
     g_mqtt_ready = false;
     if (MQTTIsConnected(&g_mqtt_client)) {
         (void)MQTTDisconnect(&g_mqtt_client);
@@ -271,6 +288,7 @@ static void mqtt_close(void)
     free(g_read_buf);
     g_send_buf = NULL;
     g_read_buf = NULL;
+    mqtt_unlock();
 }
 
 static int mqtt_connect(void)
@@ -323,9 +341,11 @@ void game_mqtt_publish_game_over(game_id_t game_id, uint16_t score)
     char payload[160];
     MQTTMessage message;
 
+    mqtt_lock();
     if (!g_mqtt_ready || !MQTTIsConnected(&g_mqtt_client)) {
         printf("MQTT offline, skip score upload: %s %u\r\n",
             game_mqtt_name(game_id), (unsigned int)score);
+        mqtt_unlock();
         return;
     }
 
@@ -344,6 +364,12 @@ void game_mqtt_publish_game_over(game_id_t game_id, uint16_t score)
     } else {
         printf("MQTT publish failed: %s\r\n", payload);
     }
+    if (MQTTPublish(&g_mqtt_client, MQTT_TOPIC_LEGACY, &message) == 0) {
+        printf("MQTT publish %s: %s\r\n", MQTT_TOPIC_LEGACY, payload);
+    } else {
+        printf("MQTT publish legacy failed: %s\r\n", payload);
+    }
+    mqtt_unlock();
 }
 
 static void game_mqtt_task(void *argument)
@@ -362,7 +388,10 @@ static void game_mqtt_task(void *argument)
             }
         }
 
-        if (MQTTYield(&g_mqtt_client, 1000) != 0) {
+        mqtt_lock();
+        int yield_rc = MQTTYield(&g_mqtt_client, 1000);
+        mqtt_unlock();
+        if (yield_rc != 0) {
             printf("MQTT yield failed, reconnect\r\n");
             mqtt_close();
             game_delay_ms(3000);
@@ -375,6 +404,9 @@ void game_mqtt_start(void)
 {
     osThreadAttr_t attr = {0};
 
+    if (g_mqtt_mutex == NULL) {
+        g_mqtt_mutex = osMutexNew(NULL);
+    }
     attr.name = "GameMqtt";
     attr.stack_size = MQTT_TASK_STACK_SIZE;
     attr.priority = MQTT_TASK_PRIO;

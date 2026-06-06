@@ -214,7 +214,6 @@ static void game_controller_task(void *argument)
 
     (void)argument;
     game_set_controller_thread(osThreadGetId());
-    game_hw_init();
     game_mqtt_start();
     printf("ESP32 pixel game console ready\r\n");
 
@@ -226,6 +225,7 @@ static void game_controller_task(void *argument)
 
 static void game_entry(void)
 {
+    game_hw_init();
     (void)create_thread("GameDisplay", game_display_task, DISPLAY_TASK_STACK_SIZE);
     (void)create_thread("GameKeys", game_key_task, KEY_TASK_STACK_SIZE);
     (void)create_thread("GameCtrl", game_controller_task, GAME_TASK_STACK_SIZE);
