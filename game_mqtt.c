@@ -22,6 +22,7 @@
 #define MQTT_TOPIC_EVENT          "wuquanbin/game/event"
 #define MQTT_TOPIC_CMD            "wuquanbin/game/cmd"
 #define MQTT_TOPIC_LEGACY         "wuquanbin"
+#define MQTT_TOPIC_SUBSCRIBE      "wuquanbin/#"
 
 #define MQTT_BUF_SIZE             2048
 #define MQTT_CMD_TIMEOUT_MS       3000
@@ -100,7 +101,10 @@ static void mqtt_callback(MessageData *msg_data)
     (void)memcpy(payload, msg_data->message->payload, (size_t)copy_len);
     payload[copy_len] = '\0';
 
-    printf("MQTT cmd: %s\r\n", payload);
+    printf("MQTT recv topic: %.*s\r\n",
+        msg_data->topicName->lenstring.len,
+        msg_data->topicName->lenstring.data);
+    printf("MQTT recv payload: %s\r\n", payload);
     if (strstr(payload, "\"revive\"") == NULL) {
         return;
     }
@@ -369,15 +373,17 @@ static int mqtt_connect(void)
         return rc;
     }
 
-    rc = MQTTSubscribe(&g_mqtt_client, MQTT_TOPIC_CMD, QOS0, mqtt_callback);
+    rc = MQTTSubscribe(&g_mqtt_client, MQTT_TOPIC_SUBSCRIBE, QOS0, mqtt_callback);
     if (rc != 0) {
-        printf("MQTT subscribe failed, rc=%d\r\n", rc);
+        printf("MQTT subscribe %s failed, rc=%d\r\n", MQTT_TOPIC_SUBSCRIBE, rc);
         mqtt_close();
         return rc;
     }
+    printf("MQTT subscribe %s success\r\n", MQTT_TOPIC_SUBSCRIBE);
 
     g_mqtt_ready = true;
-    printf("MQTT ready, cmd=%s, event=%s\r\n", MQTT_TOPIC_CMD, MQTT_TOPIC_EVENT);
+    printf("MQTT ready, sub=%s, cmd=%s, event=%s\r\n",
+        MQTT_TOPIC_SUBSCRIBE, MQTT_TOPIC_CMD, MQTT_TOPIC_EVENT);
     return 0;
 }
 
@@ -469,6 +475,7 @@ static void mqtt_publish_pending_if_any(void)
         return;
     }
     (void)mqtt_publish_one_topic(MQTT_TOPIC_LEGACY, payload);
+    (void)MQTTYield(&g_mqtt_client, MQTT_LOOP_WAIT_MS);
 }
 
 static void game_mqtt_task(void *argument)
