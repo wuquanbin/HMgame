@@ -1,0 +1,49 @@
+#===============================================================================
+# @brief    Kconfig for ESP32 snake game demo
+#===============================================================================
+config SAMPLE_SUPPORT_SNAKE_GAME
+    bool "Enable ESP32 Snake Game"
+    default n
+    help
+      Enable the snake game demo with 8x8 LED matrix, TM1650 digital tube,
+      active buzzer and five-way AD key module.
+
+config SNAKE_I2C_BUS_ID
+    int "I2C bus id for matrix + tube"
+    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    default 1
+
+config SNAKE_I2C_SCL_PIN
+    int "I2C SCL pin"
+    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    default 22
+
+config SNAKE_I2C_SDA_PIN
+    int "I2C SDA pin"
+    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    default 21
+
+config SNAKE_MATRIX_I2C_ADDR
+    int "8x8 matrix I2C address"
+    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    default 112
+
+config SNAKE_BUZZER_PIN
+    int "Active buzzer pin"
+    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    default 5
+
+config SNAKE_BUZZER_ACTIVE_LEVEL
+    int "Buzzer active level (1=high, 0=low)"
+    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    default 1
+
+config SNAKE_ADKEY_ADC_CHANNEL
+    int "AD key ADC channel"
+    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    default 6
+
+config SNAKE_TICK_MS
+    int "Snake move interval in ms"
+    depends on SAMPLE_SUPPORT_SNAKE_GAME
+    default 5000
