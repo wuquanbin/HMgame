@@ -21,7 +21,6 @@
 #define MQTT_PASSWORD             "123"
 #define MQTT_TOPIC_EVENT          "wuquanbin/game/event"
 #define MQTT_TOPIC_CMD            "wuquanbin/game/cmd"
-#define MQTT_TOPIC_LEGACY         "wuquanbin"
 #define MQTT_TOPIC_SUBSCRIBE      "wuquanbin/#"
 
 #define MQTT_BUF_SIZE             2048
@@ -474,7 +473,6 @@ static void mqtt_publish_pending_if_any(void)
         mqtt_restore_pending(game_id, score, payload);
         return;
     }
-    (void)mqtt_publish_one_topic(MQTT_TOPIC_LEGACY, payload);
     (void)MQTTYield(&g_mqtt_client, MQTT_LOOP_WAIT_MS);
 }
 
