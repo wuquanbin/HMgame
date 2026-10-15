@@ -1,17 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 490" width="1040" height="490" role="img" aria-label="ESP32 智能游戏竞技台 系统架构图">
-  <defs>
-    <marker id="arwBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#4775C8"/>
-    </marker>
-    <marker id="arwOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#EA580C"/>
-    </marker>
-  </defs>
-
   <rect x="0" y="0" width="1040" height="490" rx="16" fill="#F7F9FF"/>
 
   <text x="520" y="46" text-anchor="middle"
-        font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,'Helvetica Neue',Arial,sans-serif"
+        font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
         font-size="19" font-weight="700" fill="#173C82">ESP32 智能游戏竞技台 · 系统架构</text>
 
   <!-- ==================== ESP32 ==================== -->
@@ -108,11 +99,16 @@
   <text x="794" y="412" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
         font-size="11" fill="#64748B">广告倒计时 · 下发指令</text>
 
-  <!-- ==================== 箭头 ==================== -->
-  <line x1="292" y1="248" x2="381" y2="248" stroke="#4775C8" stroke-width="2" stroke-linecap="round" marker-end="url(#arwBlue)"/>
-  <line x1="657" y1="248" x2="746" y2="248" stroke="#4775C8" stroke-width="2" stroke-linecap="round" marker-end="url(#arwBlue)"/>
-  <line x1="383" y1="338" x2="294" y2="338" stroke="#EA580C" stroke-width="2" stroke-linecap="round" marker-end="url(#arwOrange)"/>
-  <line x1="748" y1="338" x2="659" y2="338" stroke="#EA580C" stroke-width="2" stroke-linecap="round" marker-end="url(#arwOrange)"/>
+  <!-- ==================== 箭头：用纯 path 画三角头，避免 marker 被渲染器丢弃 ==================== -->
+  <line x1="292" y1="248" x2="374" y2="248" stroke="#4775C8" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 383 248 L 373 243.5 L 373 252.5 Z" fill="#4775C8"/>
+  <line x1="657" y1="248" x2="739" y2="248" stroke="#4775C8" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 748 248 L 738 243.5 L 738 252.5 Z" fill="#4775C8"/>
+
+  <line x1="383" y1="338" x2="301" y2="338" stroke="#EA580C" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 292 338 L 302 333.5 L 302 342.5 Z" fill="#EA580C"/>
+  <line x1="748" y1="338" x2="666" y2="338" stroke="#EA580C" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 657 338 L 667 333.5 L 667 342.5 Z" fill="#EA580C"/>
 
   <text x="337" y="236" text-anchor="middle" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
         font-size="11.5" font-weight="600" fill="#4775C8">事件上报</text>
