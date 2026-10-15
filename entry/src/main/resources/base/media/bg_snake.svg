@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 180" preserveAspectRatio="xMidYMin slice">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a4d2e"/>
+      <stop offset="50%" stop-color="#2d7a3e"/>
+      <stop offset="100%" stop-color="#45a049"/>
+    </linearGradient>
+    <linearGradient id="snakeBody" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6abe3f"/>
+      <stop offset="100%" stop-color="#8fd35e"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="180" fill="url(#bg)"/>
+  <!-- 网格背景 -->
+  <g opacity="0.15">
+    <line x1="20" y1="20" x2="380" y2="20" stroke="#ffffff" stroke-width="1"/>
+    <line x1="20" y1="50" x2="380" y2="50" stroke="#ffffff" stroke-width="1"/>
+    <line x1="20" y1="80" x2="380" y2="80" stroke="#ffffff" stroke-width="1"/>
+    <line x1="20" y1="110" x2="380" y2="110" stroke="#ffffff" stroke-width="1"/>
+    <line x1="20" y1="140" x2="380" y2="140" stroke="#ffffff" stroke-width="1"/>
+    <line x1="40" y1="10" x2="40" y2="170" stroke="#ffffff" stroke-width="1"/>
+    <line x1="80" y1="10" x2="80" y2="170" stroke="#ffffff" stroke-width="1"/>
+    <line x1="120" y1="10" x2="120" y2="170" stroke="#ffffff" stroke-width="1"/>
+    <line x1="160" y1="10" x2="160" y2="170" stroke="#ffffff" stroke-width="1"/>
+    <line x1="200" y1="10" x2="200" y2="170" stroke="#ffffff" stroke-width="1"/>
+    <line x1="240" y1="10" x2="240" y2="170" stroke="#ffffff" stroke-width="1"/>
+    <line x1="280" y1="10" x2="280" y2="170" stroke="#ffffff" stroke-width="1"/>
+    <line x1="320" y1="10" x2="320" y2="170" stroke="#ffffff" stroke-width="1"/>
+    <line x1="360" y1="10" x2="360" y2="170" stroke="#ffffff" stroke-width="1"/>
+  </g>
+  <!-- 蛇身 -->
+  <g>
+    <circle cx="60" cy="90" r="14" fill="url(#snakeBody)"/>
+    <rect x="72" y="80" width="28" height="20" rx="6" fill="url(#snakeBody)"/>
+    <rect x="98" y="65" width="22" height="28" rx="6" fill="url(#snakeBody)"/>
+    <rect x="118" y="55" width="30" height="20" rx="6" fill="url(#snakeBody)"/>
+    <rect x="146" y="45" width="22" height="28" rx="6" fill="url(#snakeBody)"/>
+    <circle cx="180" cy="45" r="14" fill="#8fd35e"/>
+    <!-- 蛇眼 -->
+    <circle cx="178" cy="42" r="3" fill="#1a2e1a"/>
+    <circle cx="186" cy="42" r="3" fill="#1a2e1a"/>
+    <!-- 蛇信 -->
+    <path d="M194 48 Q210 50 215 55 L212 45 Q210 48 200 46 Z" fill="#ff4444"/>
+  </g>
+  <!-- 果实 -->
+  <g>
+    <circle cx="310" cy="130" r="12" fill="#ff4444"/>
+    <circle cx="306" cy="126" r="3" fill="#ff8888" opacity="0.7"/>
+    <path d="M308 118 Q305 112 300 110" stroke="#2d7a3e" stroke-width="2" fill="none"/>
+  </g>
+  <!-- 小果实点缀 -->
+  <circle cx="340" cy="60" r="5" fill="#ff6b6b"/>
+  <circle cx="280" cy="40" r="4" fill="#ff9999"/>
+  <circle cx="350" cy="150" r="5" fill="#ff6b6b"/>
+</svg>

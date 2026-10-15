@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 180" preserveAspectRatio="xMidYMin slice">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="50%" stop-color="#16213e"/>
+      <stop offset="100%" stop-color="#0f3460"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="180" fill="url(#bg)"/>
+  <!-- 网格背景 -->
+  <g opacity="0.15">
+    <line x1="0" y1="30" x2="400" y2="30" stroke="#00aaff" stroke-width="1"/>
+    <line x1="0" y1="60" x2="400" y2="60" stroke="#00aaff" stroke-width="1"/>
+    <line x1="0" y1="90" x2="400" y2="90" stroke="#00aaff" stroke-width="1"/>
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#00aaff" stroke-width="1"/>
+    <line x1="0" y1="150" x2="400" y2="150" stroke="#00aaff" stroke-width="1"/>
+  </g>
+  <!-- 俄罗斯方块 -->
+  <g>
+    <!-- T型块 (青色) -->
+    <rect x="40" y="40" width="28" height="28" fill="#00d4ff" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    <rect x="68" y="40" width="28" height="28" fill="#00d4ff" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    <rect x="96" y="40" width="28" height="28" fill="#00d4ff" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    <rect x="68" y="68" width="28" height="28" fill="#00d4ff" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    
+    <!-- L型块 (黄色) -->
+    <rect x="150" y="40" width="28" height="28" fill="#ffeb3b" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    <rect x="150" y="68" width="28" height="28" fill="#ffeb3b" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    <rect x="150" y="96" width="28" height="28" fill="#ffeb3b" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    <rect x="178" y="96" width="28" height="28" fill="#ffeb3b" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    
+    <!-- 方块块 (蓝色) -->
+    <rect x="230" y="80" width="28" height="28" fill="#2196f3" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    <rect x="258" y="80" width="28" height="28" fill="#2196f3" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    <rect x="230" y="108" width="28" height="28" fill="#2196f3" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    <rect x="258" y="108" width="28" height="28" fill="#2196f3" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    
+    <!-- 长条 (绿色) -->
+    <rect x="310" y="40" width="28" height="28" fill="#4caf50" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    <rect x="310" y="68" width="28" height="28" fill="#4caf50" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    <rect x="310" y="96" width="28" height="28" fill="#4caf50" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    <rect x="310" y="124" width="28" height="28" fill="#4caf50" stroke="#ffffff" stroke-width="2" opacity="0.95"/>
+    
+    <!-- Z型块 (红色) -->
+    <rect x="40" y="124" width="28" height="28" fill="#ff5252" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
+    <rect x="68" y="124" width="28" height="28" fill="#ff5252" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
+    <rect x="68" y="152" width="28" height="28" fill="#ff5252" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
+    <rect x="96" y="152" width="28" height="28" fill="#ff5252" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
+    
+    <!-- 小点缀方块 -->
+    <rect x="150" y="152" width="20" height="20" fill="#ff9800" stroke="#ffffff" stroke-width="1" opacity="0.85"/>
+    <rect x="178" y="152" width="20" height="20" fill="#9c27b0" stroke="#ffffff" stroke-width="1" opacity="0.85"/>
+  </g>
+</svg>

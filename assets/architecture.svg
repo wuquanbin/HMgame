@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 490" width="1040" height="490" role="img" aria-label="ESP32 智能游戏竞技台 系统架构图">
+  <defs>
+    <marker id="arwBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4775C8"/>
+    </marker>
+    <marker id="arwOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#EA580C"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1040" height="490" rx="16" fill="#F7F9FF"/>
+
+  <text x="520" y="46" text-anchor="middle"
+        font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,'Helvetica Neue',Arial,sans-serif"
+        font-size="19" font-weight="700" fill="#173C82">ESP32 智能游戏竞技台 · 系统架构</text>
+
+  <!-- ==================== ESP32 ==================== -->
+  <rect x="30" y="80" width="250" height="360" rx="14" fill="#FFFFFF" stroke="#DCE6F7" stroke-width="1.5"/>
+  <text x="48" y="110" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="16" font-weight="700" fill="#173C82">ESP32 开发板</text>
+  <text x="48" y="130" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" fill="#64748B">南向 · 硬件层</text>
+  <line x1="48" y1="144" x2="262" y2="144" stroke="#EDF2FA" stroke-width="1"/>
+
+  <rect x="48" y="156" width="214" height="56" rx="10" fill="#F7F9FF" stroke="#E3EAF6"/>
+  <text x="64" y="179" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="13" font-weight="600" fill="#173C82">蜂鸣器</text>
+  <text x="64" y="197" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" fill="#64748B">GPIO · PWM 音效提示</text>
+
+  <rect x="48" y="226" width="214" height="56" rx="10" fill="#F7F9FF" stroke="#E3EAF6"/>
+  <text x="64" y="249" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="13" font-weight="600" fill="#173C82">AD 五路按键</text>
+  <text x="64" y="267" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" fill="#64748B">ADC 分压 · 五键共用 1 脚</text>
+
+  <rect x="48" y="296" width="214" height="56" rx="10" fill="#F7F9FF" stroke="#E3EAF6"/>
+  <text x="64" y="319" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="13" font-weight="600" fill="#173C82">4 位数码管</text>
+  <text x="64" y="337" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" fill="#64748B">DIO · CLK · 实时显示分数</text>
+
+  <rect x="48" y="366" width="214" height="56" rx="10" fill="#F7F9FF" stroke="#E3EAF6"/>
+  <text x="64" y="389" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="13" font-weight="600" fill="#173C82">8×8 LED 矩阵灯</text>
+  <text x="64" y="407" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" fill="#64748B">I2C · 画面与远程图案</text>
+
+  <!-- ==================== MQTT Broker ==================== -->
+  <rect x="395" y="130" width="250" height="268" rx="14" fill="#FFFFFF" stroke="#DCE6F7" stroke-width="1.5"/>
+  <text x="415" y="162" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="16" font-weight="700" fill="#173C82">MQTT Broker</text>
+  <text x="415" y="183" font-family="SFMono-Regular,Consolas,Menlo,monospace"
+        font-size="11" fill="#64748B">broker.emqx.io : 1883</text>
+  <line x1="415" y1="196" x2="625" y2="196" stroke="#EDF2FA" stroke-width="1"/>
+
+  <rect x="415" y="208" width="210" height="80" rx="10" fill="#F0F5FF" stroke="#DCE6F7"/>
+  <text x="429" y="230" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" font-weight="600" fill="#4775C8">事件主题 · ESP32 → APP</text>
+  <text x="429" y="251" font-family="SFMono-Regular,Consolas,Menlo,monospace"
+        font-size="10.5" fill="#173C82">wuquanbin/game/event</text>
+  <text x="429" y="271" font-family="SFMono-Regular,Consolas,Menlo,monospace"
+        font-size="10" fill="#64748B">game_over · game_exit</text>
+
+  <rect x="415" y="298" width="210" height="80" rx="10" fill="#FFF7ED" stroke="#FED7AA"/>
+  <text x="429" y="320" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" font-weight="600" fill="#EA580C">命令主题 · APP → ESP32</text>
+  <text x="429" y="341" font-family="SFMono-Regular,Consolas,Menlo,monospace"
+        font-size="10.5" fill="#173C82">wuquanbin/game/cmd</text>
+  <text x="429" y="361" font-family="SFMono-Regular,Consolas,Menlo,monospace"
+        font-size="10" fill="#64748B">matrix · revive · exit</text>
+
+  <!-- ==================== HarmonyOS APP ==================== -->
+  <rect x="760" y="80" width="250" height="360" rx="14" fill="#FFFFFF" stroke="#DCE6F7" stroke-width="1.5"/>
+  <text x="778" y="110" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="16" font-weight="700" fill="#173C82">HarmonyOS APP</text>
+  <text x="778" y="130" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" fill="#64748B">北向 · 应用层 · ArkTS</text>
+  <line x1="778" y1="144" x2="992" y2="144" stroke="#EDF2FA" stroke-width="1"/>
+
+  <rect x="778" y="156" width="214" height="48" rx="10" fill="#F7F9FF" stroke="#E3EAF6"/>
+  <text x="794" y="176" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="13" font-weight="600" fill="#173C82">首页菜单</text>
+  <text x="794" y="192" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" fill="#64748B">三段式布局 · 主次按钮</text>
+
+  <rect x="778" y="211" width="214" height="48" rx="10" fill="#F7F9FF" stroke="#E3EAF6"/>
+  <text x="794" y="231" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="13" font-weight="600" fill="#173C82">选择游戏</text>
+  <text x="794" y="247" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" fill="#64748B">排行榜 Top 10</text>
+
+  <rect x="778" y="266" width="214" height="48" rx="10" fill="#F7F9FF" stroke="#E3EAF6"/>
+  <text x="794" y="286" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="13" font-weight="600" fill="#173C82">游戏成就</text>
+  <text x="794" y="302" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" fill="#64748B">12 枚成就徽章</text>
+
+  <rect x="778" y="321" width="214" height="48" rx="10" fill="#F7F9FF" stroke="#E3EAF6"/>
+  <text x="794" y="341" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="13" font-weight="600" fill="#173C82">矩阵灯画板</text>
+  <text x="794" y="357" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" fill="#64748B">8×8 点阵绘制 · 6 种预设</text>
+
+  <rect x="778" y="376" width="214" height="48" rx="10" fill="#F7F9FF" stroke="#E3EAF6"/>
+  <text x="794" y="396" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="13" font-weight="600" fill="#173C82">复活弹窗</text>
+  <text x="794" y="412" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" fill="#64748B">广告倒计时 · 下发指令</text>
+
+  <!-- ==================== 箭头 ==================== -->
+  <line x1="292" y1="248" x2="381" y2="248" stroke="#4775C8" stroke-width="2" stroke-linecap="round" marker-end="url(#arwBlue)"/>
+  <line x1="657" y1="248" x2="746" y2="248" stroke="#4775C8" stroke-width="2" stroke-linecap="round" marker-end="url(#arwBlue)"/>
+  <line x1="383" y1="338" x2="294" y2="338" stroke="#EA580C" stroke-width="2" stroke-linecap="round" marker-end="url(#arwOrange)"/>
+  <line x1="748" y1="338" x2="659" y2="338" stroke="#EA580C" stroke-width="2" stroke-linecap="round" marker-end="url(#arwOrange)"/>
+
+  <text x="337" y="236" text-anchor="middle" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11.5" font-weight="600" fill="#4775C8">事件上报</text>
+  <text x="337" y="360" text-anchor="middle" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11.5" font-weight="600" fill="#EA580C">指令下发</text>
+  <text x="702" y="236" text-anchor="middle" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11.5" font-weight="600" fill="#4775C8">事件上报</text>
+  <text x="702" y="360" text-anchor="middle" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11.5" font-weight="600" fill="#EA580C">指令下发</text>
+
+  <text x="520" y="468" text-anchor="middle" font-family="PingFang SC,Hiragino Sans GB,Microsoft YaHei,Noto Sans SC,sans-serif"
+        font-size="11" fill="#94A3B8">ESP32 与 APP 均直连公网 Broker，无需处于同一局域网 · APP 端自研 MQTT 3.1.1 客户端，零第三方依赖</text>
+</svg>

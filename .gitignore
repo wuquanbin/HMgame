@@ -1,0 +1,25 @@
+# ---------- 鸿蒙 / DevEco Studio 工程 ----------
+/node_modules
+/oh_modules
+/local.properties
+/.idea
+**/build
+/.hvigor
+.cxx
+/.clangd
+/.clang-format
+/.clang-tidy
+**/.test
+/.appanalyzer
+/.preview
+
+# ---------- 超GitHub 单文件 100MB 限制，无法入库 ----------
+# 原始工程压缩包 118MB：里面 90% 是 build/、oh_modules/、.hvigor/outputs/ 等编译产物。
+# 清理后的纯源码包见 esp32_games_source.zip（0.24MB），已包含全部可编译源码。
+/esp32_games.zip
+
+# MQTTX 官方安装器，第三方公开下载地址见 README
+/MQTTX-Setup-*.exe
+
+# ---------- Agent 本地工作目录 ----------
+/.workbuddy/
